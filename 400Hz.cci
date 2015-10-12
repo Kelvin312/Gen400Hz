@@ -1,0 +1,11 @@
+VERSION:3 SOURCE_TIMESTAMP:474980EC
+NODE:I LEVEL:0 LINE:23 "C:\cvavreval\inc\tiny85.h"
+NODE:M LEVEL:0 LINE:24 "MAX_PAUSE"
+NODE:V LEVEL:0 LINE:25 "swap -> R3"
+NODE:V LEVEL:0 LINE:26 "imax -> R2"
+NODE:V LEVEL:0 LINE:27 "onwait -> R5"
+NODE:V LEVEL:0 LINE:28 "waitPause -> R4"
+NODE:F LEVEL:0 LINE:31 "timer0_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:57 "timer0_compa_isr(void)"
+NODE:F LEVEL:0 LINE:64 "ana_comp_isr(void)"
+NODE:F LEVEL:0 LINE:72 "main(void)"

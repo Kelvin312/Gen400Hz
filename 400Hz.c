@@ -1,0 +1,174 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V2.05.0 Professional
+Automatic Program Generator
+© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : 
+Version : 
+Date    : 28.09.2015
+Author  : 
+Company : 
+Comments: 
+
+
+Chip type               : ATtiny85
+AVR Core Clock frequency: 8,000000 MHz
+Memory model            : Small
+External RAM size       : 0
+Data Stack size         : 128
+*****************************************************/
+
+#include <tiny85.h>
+#define MAX_PAUSE 244
+char swap = 0;
+char imax = 0;
+char onwait = 0;
+char waitPause = 0;
+
+// Timer 0 overflow interrupt service routine
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+    #asm("nop")  
+    #asm("nop")
+    #asm("nop")
+    
+    if(!imax)
+    {
+      if(swap)
+      { 
+        PORTB.1 = 1;
+        PORTB.3 = 1;
+      }
+      else
+      {
+        PORTB.0 = 1;
+        PORTB.2 = 1;
+      }
+    }   
+    swap ^= 1;  
+    if(++waitPause > 10 && OCR0A < MAX_PAUSE){ OCR0A++;  waitPause = 0;}
+    // Reinitialize Timer 0 value
+    TCNT0=0x64;   //Частота
+}
+
+// Timer 0 output compare A interrupt service routine
+interrupt [TIM0_COMPA] void timer0_compa_isr(void)
+{
+    PORTB &= 0xF0; 
+    #asm("wdr")
+}
+
+// Analog Comparator interrupt service routine
+interrupt [ANA_COMP] void ana_comp_isr(void)
+{
+    if(OCR0A > 0x80) imax = 1;
+    //PORTB &= 0xF0; 
+}
+
+// Declare your global variables here
+
+void main(void)
+{
+// Declare your local variables here
+
+// Crystal Oscillator division factor: 1
+#pragma optsize-
+CLKPR=0x80;
+CLKPR=0x00;
+#ifdef _OPTIMIZE_SIZE_
+#pragma optsize+
+#endif
+
+// Input/Output Ports initialization
+// Port B initialization
+// Func5=In Func4=In Func3=Out Func2=Out Func1=Out Func0=Out 
+// State5=T State4=T State3=0 State2=0 State1=0 State0=0 
+PORTB=0x00;
+DDRB=0x0F;
+
+// Timer/Counter 0 initialization
+// Clock source: System Clock
+// Clock value: 125,000 kHz
+// Mode: Normal top=0xFF
+// OC0A output: Disconnected
+// OC0B output: Disconnected
+TCCR0A=0x00;
+TCCR0B=0x03;
+TCNT0=0x64;
+OCR0A=0x66; //Пауза
+OCR0B=0x00;
+
+// Timer/Counter 1 initialization
+// Clock source: System Clock
+// Clock value: Timer1 Stopped
+// Mode: Normal top=0xFF
+// OC1A output: Disconnected
+// OC1B output: Disconnected
+// Timer1 Overflow Interrupt: Off
+// Compare A Match Interrupt: Off
+// Compare B Match Interrupt: Off
+PLLCSR=0x00;
+
+TCCR1=0x00;
+GTCCR=0x00;
+TCNT1=0x00;
+OCR1A=0x00;
+OCR1B=0x00;
+OCR1C=0x00;
+
+// External Interrupt(s) initialization
+// INT0: Off
+// Interrupt on any change on pins PCINT0-5: Off
+GIMSK=0x00;
+MCUCR=0x00;
+
+// Timer(s)/Counter(s) Interrupt(s) initialization
+TIMSK=0x12;
+
+// Universal Serial Interface initialization
+// Mode: Disabled
+// Clock source: Register & Counter=no clk.
+// USI Counter Overflow Interrupt: Off
+USICR=0x00;
+
+// Analog Comparator initialization
+// Analog Comparator: On
+// The Analog Comparator's positive input is
+// connected to the Bandgap Voltage Reference
+// The Analog Comparator's negative input is
+// connected to the ADC multiplexer
+// Interrupt on Falling Output Edge
+ACSR=0x4A;
+ADCSRB=0x40;
+ADMUX=0x02;
+// Digital input buffer on AIN0: Off
+// Digital input buffer on AIN1: Off
+// Digital input buffers on ADC0: On, ADC1: On, ADC2: Off, ADC3: On
+DIDR0=0x10;
+
+// ADC initialization
+// ADC disabled
+ADCSRA=0x00;
+
+// Watchdog Timer initialization
+// Watchdog Timer Prescaler: OSC/1024k
+// Watchdog Timer interrupt: Off
+#pragma optsize-
+#asm("wdr")
+WDTCR=0x39;
+WDTCR=0x29;
+#ifdef _OPTIMIZE_SIZE_
+#pragma optsize+
+#endif
+
+// Global enable interrupts
+#asm("sei")
+
+while (1)
+      {
+      // Place your code here
+
+      }
+}
